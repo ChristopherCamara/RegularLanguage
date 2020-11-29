@@ -3,7 +3,6 @@ package dfa
 import (
 	"fmt"
 	"github.com/ChristopherCamara/RegularLangauge/internal/intArray"
-	"github.com/ChristopherCamara/RegularLangauge/nfa"
 )
 
 type State struct {
@@ -30,36 +29,6 @@ func (s *State) print() {
 	for symbol, nextState := range s.Transition {
 		fmt.Printf("\t%s -> %d\n", symbol, nextState.Index)
 	}
-}
-
-func (s *State) copyOf(target *nfa.State) {
-	s.Index = target.Index
-	s.IsEnd = target.IsEnd
-	s.Closure = []int{}
-	s.Closure = append(s.Closure, target.Closure...)
-	for symbol, targetState := range target.Transition {
-		copyState := CreateState(false)
-		copyState.Index = targetState.Index
-		copyState.IsEnd = targetState.IsEnd
-		copyState.Closure = []int{}
-		copyState.Closure = append(copyState.Closure, targetState.Closure...)
-		s.Transition[symbol] = copyState
-	}
-}
-
-func Merge(targetState *State, fromState *nfa.State) *State {
-	targetState.Index = fromState.Index
-	targetState.IsEnd = fromState.IsEnd
-	targetState.Closure = []int{}
-	targetState.Closure = append(targetState.Closure, fromState.Closure...)
-	for symbol, transitionState := range fromState.Transition {
-		if targetState.Transition[symbol] != nil {
-			targetState.Transition[symbol] = Merge(targetState.Transition[symbol], transitionState)
-		} else {
-			targetState.Transition[symbol] = Merge(CreateState(false), transitionState)
-		}
-	}
-	return targetState
 }
 
 func findStateByIndex(rootState *State, index int) *State {

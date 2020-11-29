@@ -1,10 +1,36 @@
 package dfa
 
-import "github.com/ChristopherCamara/RegularLangauge/internal/intArray"
+import (
+	"fmt"
+	"github.com/ChristopherCamara/RegularLangauge/internal/intArray"
+)
 
 type DFA struct {
 	RootState *State
 	Alphabet  []string
+}
+
+func (dfa *DFA) Print() {
+	fmt.Println("~~~DFA~~~")
+	fmt.Printf("start at state %d\n", dfa.RootState.Index)
+	visited := []int{dfa.RootState.Index}
+	queue := []*State{dfa.RootState}
+	currentState := queue[0]
+	for currentState != nil {
+		for _, nextState := range currentState.Transition {
+			if intArray.IndexOf(nextState.Index, visited) == -1 {
+				queue = append(queue, nextState)
+				visited = append(visited, nextState.Index)
+			}
+		}
+		currentState.print()
+		queue = queue[1:]
+		if len(queue) != 0 {
+			currentState = queue[0]
+		} else {
+			currentState = nil
+		}
+	}
 }
 
 func ToMinDFA(dfa *DFA, alphabet []string) *DFA {

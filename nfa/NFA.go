@@ -12,7 +12,7 @@ type NFA struct {
 	Alphabet  []string
 }
 
-func Create(rootState, endState *State) *NFA {
+func New(rootState, endState *State) *NFA {
 	nfa := new(NFA)
 	nfa.RootState = rootState
 	nfa.EndState = endState
@@ -84,7 +84,7 @@ func ToDFA(nfa *NFA) *dfa.DFA {
 	epsilonClosure(nfa.RootState, &rootClosure, &rootVisited)
 	nfa.RootState.Closure = append(nfa.RootState.Closure, rootClosure...)
 	//dfa.RootState.copyOf(nfa.RootState)
-	newDFA.RootState = dfa.Merge(newDFA.RootState, nfa.RootState)
+	newDFA.RootState = Merge(newDFA.RootState, nfa.RootState)
 	currentState := newDFA.RootState
 	visited := []int{newDFA.RootState.Index}
 	queue := []*dfa.State{newDFA.RootState}
@@ -98,7 +98,7 @@ func ToDFA(nfa *NFA) *dfa.DFA {
 				//copyState := createDFAState(false)
 				//copyState.copyOf(targetState)
 				//currentState.Transition[symbol] = copyState
-				currentState = dfa.Merge(currentState, targetState)
+				currentState = Merge(currentState, targetState)
 			}
 		}
 		for _, targetState := range currentState.Transition {

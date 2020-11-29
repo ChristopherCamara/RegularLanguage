@@ -4,14 +4,14 @@ func EpsilonBasis() *NFA {
 	startState := createState(false)
 	endState := createState(true)
 	startState.addEpsilonTransition(endState)
-	return Create(startState, endState)
+	return New(startState, endState)
 }
 
 func SymbolBasis(symbol string) *NFA {
 	startState := createState(false)
 	endState := createState(true)
 	startState.addTransition(endState, symbol)
-	return Create(startState, endState)
+	return New(startState, endState)
 }
 
 func Concat(firstNFA, secondNFA *NFA) *NFA {
@@ -22,7 +22,7 @@ func Concat(firstNFA, secondNFA *NFA) *NFA {
 		firstNFA.EndState.Transition[symbol] = targetState
 	}
 	firstNFA.EndState.IsEnd = false
-	return Create(firstNFA.RootState, secondNFA.EndState)
+	return New(firstNFA.RootState, secondNFA.EndState)
 }
 
 func Union(firstNFA, secondNFA *NFA) *NFA {
@@ -34,7 +34,7 @@ func Union(firstNFA, secondNFA *NFA) *NFA {
 	firstNFA.EndState.IsEnd = false
 	secondNFA.EndState.addEpsilonTransition(newEnd)
 	secondNFA.EndState.IsEnd = false
-	return Create(newRoot, newEnd)
+	return New(newRoot, newEnd)
 }
 
 func Closure(nfa *NFA) *NFA {
@@ -45,5 +45,5 @@ func Closure(nfa *NFA) *NFA {
 	nfa.EndState.addEpsilonTransition(newEnd)
 	nfa.EndState.IsEnd = false
 	nfa.EndState.addEpsilonTransition(nfa.RootState)
-	return Create(newRoot, newEnd)
+	return New(newRoot, newEnd)
 }
