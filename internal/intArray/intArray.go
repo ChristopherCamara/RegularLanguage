@@ -11,6 +11,18 @@ func IndexOf(find int, slice []int) int {
 	return -1
 }
 
+func Equals(first, second []int) bool {
+	if len(first) != len(second) {
+		return false
+	}
+	for _, secondElement := range second {
+		if IndexOf(secondElement, first) == -1 {
+			return false
+		}
+	}
+	return true
+}
+
 func Remove(find int, slice *[]int) {
 	for index, element := range *slice {
 		if find == element {

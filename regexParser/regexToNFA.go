@@ -1,6 +1,9 @@
 package regexParser
 
-import "github.com/ChristopherCamara/RegularLangauge/nfa"
+import (
+	"github.com/ChristopherCamara/RegularLangauge/internal/stringArray"
+	"github.com/ChristopherCamara/RegularLangauge/nfa"
+)
 
 func (p *RegexParser) expr() *nfa.NFA {
 	term := p.term()
@@ -43,7 +46,9 @@ func (p *RegexParser) char() *nfa.NFA {
 		panic("Unexpected meta char!")
 	}
 	current := p.next()
-	p.Alphabet = append(p.Alphabet, current)
+	if stringArray.IndexOf(current, p.Alphabet) == -1 {
+		p.Alphabet = append(p.Alphabet, current)
+	}
 	return nfa.SymbolBasis(current)
 }
 
