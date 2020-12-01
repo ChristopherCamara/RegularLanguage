@@ -39,7 +39,7 @@ func (dfa *DFA) addState(isStart, isAccept bool) int {
 	return index
 }
 
-func (dfa *DFA) addTransition(sourceState int, symbol string, targetState int) {
+func (dfa *DFA) AddTransition(sourceState int, symbol string, targetState int) {
 	dfa.Transitions[sourceState][symbol] = targetState
 }
 

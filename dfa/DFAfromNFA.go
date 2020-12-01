@@ -76,7 +76,7 @@ func FromNFA(NFA *nfa.NFA) *DFA {
 			}
 		}
 		for symbol, transition := range collapsedTransitions[i] {
-			dfa.addTransition(newState, symbol, transition)
+			dfa.AddTransition(newState, symbol, transition)
 		}
 	}
 	return dfa
