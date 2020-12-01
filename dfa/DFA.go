@@ -43,10 +43,6 @@ func (dfa *DFA) addTransition(sourceState int, symbol string, targetState int) {
 	dfa.Transitions[sourceState][symbol] = targetState
 }
 
-//func (dfa *DFA) ToMinDFA() {
-//
-//}
-
 func (dfa *DFA) Print() {
 	fmt.Println("~~~DFA~~~")
 	fmt.Print("start states: ")
