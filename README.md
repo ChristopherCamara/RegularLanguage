@@ -1,1 +1,1 @@
-# RegularLangauges
+# RegularLanguages
