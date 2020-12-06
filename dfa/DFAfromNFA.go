@@ -1,8 +1,8 @@
 package dfa
 
 import (
-	"github.com/ChristopherCamara/RegularLangauge/internal/intArray"
-	"github.com/ChristopherCamara/RegularLangauge/nfa"
+	"github.com/ChristopherCamara/RegularLanguage/internal/intArray"
+	"github.com/ChristopherCamara/RegularLanguage/nfa"
 )
 
 func FromNFA(NFA *nfa.NFA) *DFA {

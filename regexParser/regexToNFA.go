@@ -1,8 +1,8 @@
 package regexParser
 
 import (
-	"github.com/ChristopherCamara/RegularLangauge/internal/stringArray"
-	"github.com/ChristopherCamara/RegularLangauge/nfa"
+	"github.com/ChristopherCamara/RegularLanguage/internal/stringArray"
+	"github.com/ChristopherCamara/RegularLanguage/nfa"
 )
 
 func (p *RegexParser) expr() *nfa.NFA {

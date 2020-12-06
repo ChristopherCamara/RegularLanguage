@@ -1,7 +1,7 @@
 package dfa
 
 import (
-	"github.com/ChristopherCamara/RegularLangauge/internal/intArray"
+	"github.com/ChristopherCamara/RegularLanguage/internal/intArray"
 )
 
 func (dfa *DFA) distinguishable(first, second int, otherPartition []int) bool {
@@ -44,7 +44,7 @@ func (dfa *DFA) ToMinDFA() {
 				if sinkState == -1 {
 					sinkState = dfa.addState(false, false)
 					for _, symbol := range dfa.Alphabet {
-						dfa.addTransition(sinkState, symbol, sinkState)
+						dfa.AddTransition(sinkState, symbol, sinkState)
 					}
 				}
 				dfa.Transitions[currentState][symbol] = sinkState

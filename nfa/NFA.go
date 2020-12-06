@@ -2,7 +2,7 @@ package nfa
 
 import (
 	"fmt"
-	"github.com/ChristopherCamara/RegularLangauge/internal/intArray"
+	"github.com/ChristopherCamara/RegularLanguage/internal/intArray"
 )
 
 type NFA struct {
