@@ -7,6 +7,7 @@ import (
 	"github.com/goccy/go-graphviz/cgraph"
 	"log"
 	"strconv"
+	"strings"
 )
 
 type NFA struct {
@@ -37,6 +38,8 @@ func New() *NFA {
 }
 
 func (nfa *NFA) SaveGraphviz(fileName string) {
+	fileName = strings.ReplaceAll(fileName, "*", "star")
+	fileName = strings.ReplaceAll(fileName, "|", " or ")
 	g := graphviz.New()
 	graph, err := g.Graph()
 	if err != nil {
