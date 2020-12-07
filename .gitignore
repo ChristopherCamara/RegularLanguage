@@ -1,3 +1,5 @@
 .idea
 cmd
 bin
+*.png
+*.svg

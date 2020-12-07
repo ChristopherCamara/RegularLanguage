@@ -3,6 +3,10 @@ package nfa
 import (
 	"fmt"
 	"github.com/ChristopherCamara/RegularLanguage/internal/intArray"
+	"github.com/goccy/go-graphviz"
+	"github.com/goccy/go-graphviz/cgraph"
+	"log"
+	"strconv"
 )
 
 type NFA struct {
@@ -15,6 +19,11 @@ type NFA struct {
 	EpsilonTransitions map[int][]int
 }
 
+type edge struct {
+	edge  *cgraph.Edge
+	label string
+}
+
 func New() *NFA {
 	newNFA := new(NFA)
 	newNFA.nextState = 0
@@ -25,6 +34,86 @@ func New() *NFA {
 	newNFA.Transitions = make(map[int]map[string][]int, 0)
 	newNFA.EpsilonTransitions = make(map[int][]int, 0)
 	return newNFA
+}
+
+func (nfa *NFA) SaveGraphviz(fileName string) {
+	g := graphviz.New()
+	graph, err := g.Graph()
+	if err != nil {
+		log.Fatal(err)
+	}
+	graph.SetLayout("dot")
+	graph.SetRankDir(cgraph.LRRank)
+	defer func() {
+		if err := graph.Close(); err != nil {
+			log.Fatal(err)
+		}
+	}()
+	nodeMappings := make(map[int]*cgraph.Node)
+	edgeMappings := make(map[int]map[int]*edge)
+	for _, currentState := range nfa.States {
+		newNode, err := graph.CreateNode(strconv.Itoa(currentState))
+		if err != nil {
+			log.Panic(err)
+		}
+		if intArray.IndexOf(currentState, nfa.StartStates) != -1 {
+			nilNode, err := graph.CreateNode("")
+			if err != nil {
+				log.Panic(err)
+			}
+			nilNode.SetShape(cgraph.NoneShape)
+			_, err = graph.CreateEdge("", nilNode, newNode)
+			if err != nil {
+				log.Panic(err)
+			}
+		}
+		if intArray.IndexOf(currentState, nfa.AcceptStates) != -1 {
+			newNode.SetShape(cgraph.DoubleCircleShape)
+		} else {
+			newNode.SetShape(cgraph.CircleShape)
+		}
+		nodeMappings[currentState] = newNode
+	}
+	for _, currentState := range nfa.States {
+		for _, transitionState := range nfa.EpsilonTransitions[currentState] {
+			newEdge, err := graph.CreateEdge("", nodeMappings[currentState], nodeMappings[transitionState])
+			if err != nil {
+				log.Panic(err)
+			}
+			newEdge.SetLabel("ε")
+			if edgeMappings[currentState] == nil {
+				edgeMappings[currentState] = make(map[int]*edge)
+				edgeMappings[currentState][transitionState] = &edge{edge: newEdge, label: "ε"}
+			} else if currentEdge, exists := edgeMappings[currentState][transitionState]; exists {
+				currentEdge.label = currentEdge.label + ",ε"
+				currentEdge.edge.SetLabel(currentEdge.label)
+			} else {
+				edgeMappings[currentState][transitionState] = &edge{edge: newEdge, label: "ε"}
+			}
+		}
+		for symbol, transitionStates := range nfa.Transitions[currentState] {
+			for _, transitionState := range transitionStates {
+				newEdge, err := graph.CreateEdge("", nodeMappings[currentState], nodeMappings[transitionState])
+				if err != nil {
+					log.Panic(err)
+				}
+				newEdge.SetLabel(symbol)
+				if edgeMappings[currentState] == nil {
+					edgeMappings[currentState] = make(map[int]*edge)
+					edgeMappings[currentState][transitionState] = &edge{edge: newEdge, label: symbol}
+				} else if currentEdge, exists := edgeMappings[currentState][transitionState]; exists {
+					currentEdge.label = currentEdge.label + "," + symbol
+					currentEdge.edge.SetLabel(currentEdge.label)
+				} else {
+					edgeMappings[currentState][transitionState] = &edge{edge: newEdge, label: symbol}
+				}
+			}
+		}
+	}
+	err = g.RenderFilename(graph, graphviz.SVG, fileName+".svg")
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (nfa *NFA) RemoveState(removeState int) {
