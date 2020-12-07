@@ -2,16 +2,16 @@ package nfa
 
 func EpsilonBasis() *NFA {
 	newNFA := New()
-	startState := newNFA.addState(true, false)
-	endState := newNFA.addState(false, true)
-	newNFA.addEpsilonTransition(startState, endState)
+	startState := newNFA.AddState(true, false)
+	endState := newNFA.AddState(false, true)
+	newNFA.AddEpsilonTransition(startState, endState)
 	return newNFA
 }
 
 func SymbolBasis(symbol string) *NFA {
 	newNFA := New()
-	startState := newNFA.addState(true, false)
-	endState := newNFA.addState(false, true)
-	newNFA.addTransition(startState, symbol, endState)
+	startState := newNFA.AddState(true, false)
+	endState := newNFA.AddState(false, true)
+	newNFA.AddTransition(startState, symbol, endState)
 	return newNFA
 }

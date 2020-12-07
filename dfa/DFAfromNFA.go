@@ -7,7 +7,6 @@ import (
 
 func FromNFA(NFA *nfa.NFA) *DFA {
 	epsilonClosures := NFA.GetEpsilonClosures()
-	//collapsedIndex := 0
 	collapsedStates := make(map[int][]int, 0)
 	collapsedTransitions := make(map[int]map[string]int, 0)
 	collapsedStates[0] = epsilonClosures[NFA.StartStates[0]]
@@ -62,7 +61,7 @@ func FromNFA(NFA *nfa.NFA) *DFA {
 	dfa := New()
 	dfa.Alphabet = NFA.Alphabet
 	for i := 0; i < len(collapsedStates); i++ {
-		newState := dfa.addState(false, false)
+		newState := dfa.AddState(false, false)
 		for _, state := range collapsedStates[i] {
 			if intArray.IndexOf(state, NFA.StartStates) != -1 {
 				if intArray.IndexOf(newState, dfa.StartStates) == -1 {

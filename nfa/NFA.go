@@ -27,7 +27,7 @@ func New() *NFA {
 	return newNFA
 }
 
-func (nfa *NFA) removeState(removeState int) {
+func (nfa *NFA) RemoveState(removeState int) {
 	intArray.Remove(removeState, &nfa.States)
 	intArray.Remove(removeState, &nfa.StartStates)
 	intArray.Remove(removeState, &nfa.AcceptStates)
@@ -66,7 +66,7 @@ func (nfa *NFA) removeState(removeState int) {
 	nfa.nextState--
 }
 
-func (nfa *NFA) addState(isStart, isAccept bool) int {
+func (nfa *NFA) AddState(isStart, isAccept bool) int {
 	index := nfa.nextState
 	nfa.States = append(nfa.States, index)
 	nfa.Transitions[index] = make(map[string][]int, 0)
@@ -81,11 +81,11 @@ func (nfa *NFA) addState(isStart, isAccept bool) int {
 	return index
 }
 
-func (nfa *NFA) addEpsilonTransition(sourceState, targetState int) {
+func (nfa *NFA) AddEpsilonTransition(sourceState, targetState int) {
 	nfa.EpsilonTransitions[sourceState] = append(nfa.EpsilonTransitions[sourceState], targetState)
 }
 
-func (nfa *NFA) addTransition(sourceState int, symbol string, targetState int) {
+func (nfa *NFA) AddTransition(sourceState int, symbol string, targetState int) {
 	nfa.Transitions[sourceState][symbol] = append(nfa.Transitions[sourceState][symbol], targetState)
 }
 
@@ -93,19 +93,19 @@ func (nfa *NFA) merge(other *NFA) map[int]int {
 	//map otherStates to new states in nfa
 	newStates := make(map[int]int, 0)
 	for _, otherState := range other.States {
-		newStates[otherState] = nfa.addState(false, false)
+		newStates[otherState] = nfa.AddState(false, false)
 	}
 	//update epsilon transitions to new states
 	for otherState, transitionStates := range other.EpsilonTransitions {
 		for _, transitionState := range transitionStates {
-			nfa.addEpsilonTransition(newStates[otherState], newStates[transitionState])
+			nfa.AddEpsilonTransition(newStates[otherState], newStates[transitionState])
 		}
 	}
 	//update transitions to new states
 	for otherState, transitions := range other.Transitions {
 		for symbol, transitionStates := range transitions {
 			for _, transitionState := range transitionStates {
-				nfa.addTransition(newStates[otherState], symbol, newStates[transitionState])
+				nfa.AddTransition(newStates[otherState], symbol, newStates[transitionState])
 			}
 		}
 	}
@@ -118,13 +118,13 @@ func (nfa *NFA) Concat(other *NFA) {
 	for _, otherStart := range other.StartStates {
 		for _, otherTransition := range other.EpsilonTransitions[otherStart] {
 			for _, acceptState := range nfa.AcceptStates {
-				nfa.addEpsilonTransition(acceptState, newStates[otherTransition])
+				nfa.AddEpsilonTransition(acceptState, newStates[otherTransition])
 			}
 		}
 		for symbol, otherTransitions := range other.Transitions[otherStart] {
 			for _, otherTransition := range otherTransitions {
 				for _, acceptState := range nfa.AcceptStates {
-					nfa.addTransition(acceptState, symbol, newStates[otherTransition])
+					nfa.AddTransition(acceptState, symbol, newStates[otherTransition])
 				}
 			}
 		}
@@ -135,45 +135,45 @@ func (nfa *NFA) Concat(other *NFA) {
 		}
 		//remove the otherStartStates now that its ported over
 		for _, otherStart := range other.StartStates {
-			nfa.removeState(newStates[otherStart])
+			nfa.RemoveState(newStates[otherStart])
 		}
 	}
 }
 
 func (nfa *NFA) Union(other *NFA) {
 	newNFA := New()
-	newStart := newNFA.addState(true, false)
+	newStart := newNFA.AddState(true, false)
 	newStates := newNFA.merge(nfa)
 	newOtherStates := newNFA.merge(other)
-	newAccept := newNFA.addState(false, true)
+	newAccept := newNFA.AddState(false, true)
 	for _, startState := range nfa.StartStates {
-		newNFA.addEpsilonTransition(newStart, newStates[startState])
+		newNFA.AddEpsilonTransition(newStart, newStates[startState])
 	}
 	for _, otherStart := range other.StartStates {
-		newNFA.addEpsilonTransition(newStart, newOtherStates[otherStart])
+		newNFA.AddEpsilonTransition(newStart, newOtherStates[otherStart])
 	}
 	for _, acceptState := range nfa.AcceptStates {
-		newNFA.addEpsilonTransition(newStates[acceptState], newAccept)
+		newNFA.AddEpsilonTransition(newStates[acceptState], newAccept)
 	}
 	for _, otherAccept := range other.AcceptStates {
-		newNFA.addEpsilonTransition(newOtherStates[otherAccept], newAccept)
+		newNFA.AddEpsilonTransition(newOtherStates[otherAccept], newAccept)
 	}
 	*nfa = *newNFA
 }
 
 func (nfa *NFA) Closure() {
 	newNFA := New()
-	newStart := newNFA.addState(true, false)
+	newStart := newNFA.AddState(true, false)
 	newStates := newNFA.merge(nfa)
-	newAccept := newNFA.addState(false, true)
-	newNFA.addEpsilonTransition(newStart, newAccept)
+	newAccept := newNFA.AddState(false, true)
+	newNFA.AddEpsilonTransition(newStart, newAccept)
 	for _, startState := range nfa.StartStates {
-		newNFA.addEpsilonTransition(newStart, newStates[startState])
+		newNFA.AddEpsilonTransition(newStart, newStates[startState])
 	}
 	for _, acceptState := range nfa.AcceptStates {
-		newNFA.addEpsilonTransition(newStates[acceptState], newAccept)
+		newNFA.AddEpsilonTransition(newStates[acceptState], newAccept)
 		for _, startState := range nfa.StartStates {
-			newNFA.addEpsilonTransition(newStates[acceptState], newStates[startState])
+			newNFA.AddEpsilonTransition(newStates[acceptState], newStates[startState])
 		}
 	}
 	*nfa = *newNFA

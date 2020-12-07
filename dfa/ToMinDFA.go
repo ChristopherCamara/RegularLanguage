@@ -42,7 +42,7 @@ func (dfa *DFA) ToMinDFA() {
 		for _, symbol := range dfa.Alphabet {
 			if _, exists := dfa.Transitions[currentState][symbol]; !exists {
 				if sinkState == -1 {
-					sinkState = dfa.addState(false, false)
+					sinkState = dfa.AddState(false, false)
 					for _, symbol := range dfa.Alphabet {
 						dfa.AddTransition(sinkState, symbol, sinkState)
 					}
@@ -120,7 +120,7 @@ func (dfa *DFA) ToMinDFA() {
 	minDFA := New()
 	minStates := make(map[int]int, 0)
 	for i := 0; i < len(statePartitions); i++ {
-		minStates[i] = minDFA.addState(false, false)
+		minStates[i] = minDFA.AddState(false, false)
 	}
 	for i := 0; i < len(statePartitions); i++ {
 		for _, state := range statePartitions[i] {

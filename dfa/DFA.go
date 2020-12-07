@@ -25,7 +25,7 @@ func New() *DFA {
 	return newDFA
 }
 
-func (dfa *DFA) addState(isStart, isAccept bool) int {
+func (dfa *DFA) AddState(isStart, isAccept bool) int {
 	index := dfa.nextState
 	dfa.States = append(dfa.States, index)
 	dfa.Transitions[index] = make(map[string]int, 0)
