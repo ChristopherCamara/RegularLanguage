@@ -75,8 +75,13 @@ func (dfa *DFA) ToMinDFA() {
 	}
 	numPartitions := 0
 	for len(statePartitions) != numPartitions {
-		splitFlag := false
 		numPartitions = len(statePartitions)
+		previousPartitions := make([][]int, numPartitions)
+		for i := 0; i < numPartitions; i++ {
+			previousPartitions[i] = make([]int, len(statePartitions[i]))
+			copy(previousPartitions[i], statePartitions[i])
+		}
+		splitFlag := false
 		for currentPartitionIndex := 0; currentPartitionIndex < numPartitions; currentPartitionIndex++ {
 			for i := 0; i < len(statePartitions[currentPartitionIndex])-1; i++ {
 				for j := i + 1; j < len(statePartitions[currentPartitionIndex]); j++ {
@@ -86,7 +91,7 @@ func (dfa *DFA) ToMinDFA() {
 						if k == currentPartitionIndex {
 							continue
 						}
-						if dfa.distinguishable(firstState, secondState, statePartitions[k]) {
+						if dfa.distinguishable(firstState, secondState, previousPartitions[k]) {
 							intArray.Remove(secondState, &statePartitions[currentPartitionIndex])
 							if !splitFlag {
 								statePartitions = append(statePartitions, make([]int, 0))
