@@ -123,6 +123,7 @@ func (dfa *DFA) ToMinDFA() {
 		}
 	}
 	minDFA := New()
+	minDFA.Alphabet = dfa.Alphabet
 	minStates := make(map[int]int, 0)
 	for i := 0; i < len(statePartitions); i++ {
 		minStates[i] = minDFA.AddState(false, false)

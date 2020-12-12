@@ -3,6 +3,7 @@ package dfa
 import (
 	"fmt"
 	"github.com/ChristopherCamara/RegularLanguage/internal/intArray"
+	"github.com/ChristopherCamara/RegularLanguage/nfa"
 	"github.com/goccy/go-graphviz"
 	"github.com/goccy/go-graphviz/cgraph"
 	"log"
@@ -93,7 +94,7 @@ func (dfa *DFA) SaveGraphviz(fileName string) {
 			}
 		}
 	}
-	err = g.RenderFilename(graph, graphviz.SVG, fileName+".svg")
+	err = g.RenderFilename(graph, graphviz.PNG, fileName+".png")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -131,4 +132,36 @@ func (dfa *DFA) Print() {
 	}
 	fmt.Print("accept states: ")
 	intArray.Print(dfa.AcceptStates)
+}
+
+func (dfa *DFA) Reverse() *DFA {
+	NFA := nfa.New()
+	NFA.Alphabet = dfa.Alphabet
+	stateMappings := make(map[int]int)
+	for _, state := range dfa.States {
+		stateMappings[state] = NFA.AddState(false, false)
+		if intArray.IndexOf(state, dfa.StartStates) != -1 {
+			NFA.AcceptStates = append(NFA.AcceptStates, stateMappings[state])
+		}
+		if intArray.IndexOf(state, dfa.AcceptStates) != -1 {
+			NFA.StartStates = append(NFA.StartStates, stateMappings[state])
+		}
+	}
+	for _, state := range dfa.States {
+		for symbol, transitionState := range dfa.Transitions[state] {
+			if _, exists := NFA.Transitions[stateMappings[transitionState]]; !exists {
+				NFA.Transitions[stateMappings[transitionState]] = make(map[string][]int, 0)
+			}
+			NFA.Transitions[stateMappings[transitionState]][symbol] = append(NFA.Transitions[stateMappings[transitionState]][symbol], stateMappings[state])
+		}
+	}
+	newStart := NFA.AddState(false, false)
+	for _, startState := range NFA.StartStates {
+		NFA.AddEpsilonTransition(newStart, startState)
+	}
+	NFA.StartStates = []int{newStart}
+	NFA.SaveGraphviz("test")
+	reverseDFA := FromNFA(NFA)
+	reverseDFA.ToMinDFA()
+	return reverseDFA
 }
