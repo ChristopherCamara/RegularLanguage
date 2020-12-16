@@ -1,11 +1,10 @@
-package dfa
+package RegularLanguage
 
 import (
 	"github.com/ChristopherCamara/RegularLanguage/internal/intArray"
-	"github.com/ChristopherCamara/RegularLanguage/nfa"
 )
 
-func FromNFA(NFA *nfa.NFA) *DFA {
+func FromNFA(NFA *NFA) *DFA {
 	epsilonClosures := NFA.GetEpsilonClosures()
 	collapsedStates := make(map[int][]int, 0)
 	collapsedTransitions := make(map[int]map[string]int, 0)
@@ -58,7 +57,7 @@ func FromNFA(NFA *nfa.NFA) *DFA {
 			currentState = nil
 		}
 	}
-	dfa := New()
+	dfa := NewDFA()
 	dfa.Alphabet = NFA.Alphabet
 	for i := 0; i < len(collapsedStates); i++ {
 		newState := dfa.AddState(false, false)

@@ -1,4 +1,4 @@
-package nfa
+package RegularLanguage
 
 import (
 	"fmt"
@@ -25,7 +25,7 @@ type edge struct {
 	label string
 }
 
-func New() *NFA {
+func NewNFA() *NFA {
 	newNFA := new(NFA)
 	newNFA.nextState = 0
 	newNFA.Alphabet = make([]string, 0)
@@ -233,7 +233,7 @@ func (nfa *NFA) Concat(other *NFA) {
 }
 
 func (nfa *NFA) Union(other *NFA) {
-	newNFA := New()
+	newNFA := NewNFA()
 	newStart := newNFA.AddState(true, false)
 	newStates := newNFA.merge(nfa)
 	newOtherStates := newNFA.merge(other)
@@ -254,7 +254,7 @@ func (nfa *NFA) Union(other *NFA) {
 }
 
 func (nfa *NFA) Closure() {
-	newNFA := New()
+	newNFA := NewNFA()
 	newStart := newNFA.AddState(true, false)
 	newStates := newNFA.merge(nfa)
 	newAccept := newNFA.AddState(false, true)

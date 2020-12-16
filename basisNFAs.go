@@ -1,7 +1,7 @@
-package nfa
+package RegularLanguage
 
 func EpsilonBasis() *NFA {
-	newNFA := New()
+	newNFA := NewNFA()
 	startState := newNFA.AddState(true, false)
 	endState := newNFA.AddState(false, true)
 	newNFA.AddEpsilonTransition(startState, endState)
@@ -9,7 +9,7 @@ func EpsilonBasis() *NFA {
 }
 
 func SymbolBasis(symbol string) *NFA {
-	newNFA := New()
+	newNFA := NewNFA()
 	startState := newNFA.AddState(true, false)
 	endState := newNFA.AddState(false, true)
 	newNFA.AddTransition(startState, symbol, endState)

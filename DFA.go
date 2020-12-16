@@ -1,9 +1,8 @@
-package dfa
+package RegularLanguage
 
 import (
 	"fmt"
 	"github.com/ChristopherCamara/RegularLanguage/internal/intArray"
-	"github.com/ChristopherCamara/RegularLanguage/nfa"
 	"github.com/goccy/go-graphviz"
 	"github.com/goccy/go-graphviz/cgraph"
 	"log"
@@ -20,12 +19,7 @@ type DFA struct {
 	Transitions  map[int]map[string]int
 }
 
-type edge struct {
-	edge  *cgraph.Edge
-	label string
-}
-
-func New() *DFA {
+func NewDFA() *DFA {
 	newDFA := new(DFA)
 	newDFA.nextState = 0
 	newDFA.Alphabet = make([]string, 0)
@@ -135,7 +129,7 @@ func (dfa *DFA) Print() {
 }
 
 func (dfa *DFA) Reverse() *DFA {
-	NFA := nfa.New()
+	NFA := NewNFA()
 	NFA.Alphabet = dfa.Alphabet
 	stateMappings := make(map[int]int)
 	for _, state := range dfa.States {

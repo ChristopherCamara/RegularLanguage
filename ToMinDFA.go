@@ -1,4 +1,4 @@
-package dfa
+package RegularLanguage
 
 import (
 	"github.com/ChristopherCamara/RegularLanguage/internal/intArray"
@@ -122,7 +122,7 @@ func (dfa *DFA) ToMinDFA() {
 			}
 		}
 	}
-	minDFA := New()
+	minDFA := NewDFA()
 	minDFA.Alphabet = dfa.Alphabet
 	minStates := make(map[int]int, 0)
 	for i := 0; i < len(statePartitions); i++ {

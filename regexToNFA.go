@@ -1,11 +1,10 @@
-package regexParser
+package RegularLanguage
 
 import (
 	"github.com/ChristopherCamara/RegularLanguage/internal/stringArray"
-	"github.com/ChristopherCamara/RegularLanguage/nfa"
 )
 
-func (p *RegexParser) expr() *nfa.NFA {
+func (p *RegexParser) expr() *NFA {
 	term := p.term()
 	if p.hasMoreChars() && p.peek() == "|" {
 		p.eat("|")
@@ -14,7 +13,7 @@ func (p *RegexParser) expr() *nfa.NFA {
 	return term
 }
 
-func (p *RegexParser) term() *nfa.NFA {
+func (p *RegexParser) term() *NFA {
 	factor := p.factor()
 	if p.hasMoreChars() && p.peek() != ")" && p.peek() != "|" {
 		factor.Concat(p.term())
@@ -22,7 +21,7 @@ func (p *RegexParser) term() *nfa.NFA {
 	return factor
 }
 
-func (p *RegexParser) factor() *nfa.NFA {
+func (p *RegexParser) factor() *NFA {
 	atom := p.atom()
 	if p.hasMoreChars() && p.isMetaChar(p.peek()) {
 		p.next()
@@ -31,7 +30,7 @@ func (p *RegexParser) factor() *nfa.NFA {
 	return atom
 }
 
-func (p *RegexParser) atom() *nfa.NFA {
+func (p *RegexParser) atom() *NFA {
 	if p.peek() == "(" {
 		p.eat("(")
 		expr := p.expr()
@@ -41,7 +40,7 @@ func (p *RegexParser) atom() *nfa.NFA {
 	return p.char()
 }
 
-func (p *RegexParser) char() *nfa.NFA {
+func (p *RegexParser) char() *NFA {
 	if p.isMetaChar(p.peek()) {
 		panic("Unexpected meta char!")
 	}
@@ -49,14 +48,14 @@ func (p *RegexParser) char() *nfa.NFA {
 	if stringArray.IndexOf(current, p.Alphabet) == -1 {
 		p.Alphabet = append(p.Alphabet, current)
 	}
-	return nfa.SymbolBasis(current)
+	return SymbolBasis(current)
 }
 
-func (p *RegexParser) ParseToNFA(regex string) *nfa.NFA {
+func (p *RegexParser) ParseToNFA(regex string) *NFA {
 	p.Regex = regex
 	p.position = 0
 	if p.Regex == "" {
-		return nfa.EpsilonBasis()
+		return EpsilonBasis()
 	}
 	newNFA := p.expr()
 	newNFA.Alphabet = p.Alphabet

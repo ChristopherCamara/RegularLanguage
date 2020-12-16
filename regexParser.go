@@ -1,4 +1,4 @@
-package regexParser
+package RegularLanguage
 
 type RegexParser struct {
 	Alphabet []string
