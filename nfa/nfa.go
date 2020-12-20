@@ -1,15 +1,17 @@
-package RegularLanguage
+package nfa
 
 import (
 	"fmt"
-	"github.com/ChristopherCamara/RegularLanguage/internal/intArray"
-	"github.com/goccy/go-graphviz"
-	"github.com/goccy/go-graphviz/cgraph"
 	"log"
 	"strconv"
 	"strings"
+
+	"github.com/ChristopherCamara/finiteAutomata/internal/intArray"
+	"github.com/goccy/go-graphviz"
+	"github.com/goccy/go-graphviz/cgraph"
 )
 
+//NFA non-deterministic finite automata struct definition
 type NFA struct {
 	nextState          int
 	Alphabet           []string
@@ -25,7 +27,8 @@ type edge struct {
 	label string
 }
 
-func NewNFA() *NFA {
+//New returns ready to use *NFA
+func New() *NFA {
 	newNFA := new(NFA)
 	newNFA.nextState = 0
 	newNFA.Alphabet = make([]string, 0)
@@ -37,6 +40,7 @@ func NewNFA() *NFA {
 	return newNFA
 }
 
+//SaveGraphviz image file
 func (nfa *NFA) SaveGraphviz(fileName string) {
 	fileName = strings.ReplaceAll(fileName, "*", "star")
 	fileName = strings.ReplaceAll(fileName, "|", " or ")
@@ -119,6 +123,7 @@ func (nfa *NFA) SaveGraphviz(fileName string) {
 	}
 }
 
+//RemoveState from a NFA
 func (nfa *NFA) RemoveState(removeState int) {
 	intArray.Remove(removeState, &nfa.States)
 	intArray.Remove(removeState, &nfa.StartStates)
@@ -158,6 +163,7 @@ func (nfa *NFA) RemoveState(removeState int) {
 	nfa.nextState--
 }
 
+//AddState to a NFA
 func (nfa *NFA) AddState(isStart, isAccept bool) int {
 	index := nfa.nextState
 	nfa.States = append(nfa.States, index)
@@ -173,10 +179,12 @@ func (nfa *NFA) AddState(isStart, isAccept bool) int {
 	return index
 }
 
+//AddEpsilonTransition from sourceState to targetState
 func (nfa *NFA) AddEpsilonTransition(sourceState, targetState int) {
 	nfa.EpsilonTransitions[sourceState] = append(nfa.EpsilonTransitions[sourceState], targetState)
 }
 
+//AddTransition from sourceState to targetState with given symbol
 func (nfa *NFA) AddTransition(sourceState int, symbol string, targetState int) {
 	nfa.Transitions[sourceState][symbol] = append(nfa.Transitions[sourceState][symbol], targetState)
 }
@@ -204,6 +212,7 @@ func (nfa *NFA) merge(other *NFA) map[int]int {
 	return newStates
 }
 
+//Concat other NFA to the end of a NFA
 func (nfa *NFA) Concat(other *NFA) {
 	newStates := nfa.merge(other)
 	//move all transitions from other startStates to our acceptStates
@@ -232,8 +241,9 @@ func (nfa *NFA) Concat(other *NFA) {
 	}
 }
 
+//Union other NFA with a NFA
 func (nfa *NFA) Union(other *NFA) {
-	newNFA := NewNFA()
+	newNFA := New()
 	newStart := newNFA.AddState(true, false)
 	newStates := newNFA.merge(nfa)
 	newOtherStates := newNFA.merge(other)
@@ -253,8 +263,9 @@ func (nfa *NFA) Union(other *NFA) {
 	*nfa = *newNFA
 }
 
+//Closure of a NFA
 func (nfa *NFA) Closure() {
-	newNFA := NewNFA()
+	newNFA := New()
 	newStart := newNFA.AddState(true, false)
 	newStates := newNFA.merge(nfa)
 	newAccept := newNFA.AddState(false, true)
@@ -271,6 +282,7 @@ func (nfa *NFA) Closure() {
 	*nfa = *newNFA
 }
 
+//Print out NFA information
 func (nfa *NFA) Print() {
 	fmt.Println("~~~NFA~~~")
 	fmt.Print("start states: ")
@@ -304,6 +316,7 @@ func (nfa *NFA) epsilonClosure(state int, closure *[]int, visited *[]int) {
 	}
 }
 
+//GetEpsilonClosures of every state of a NFA
 func (nfa *NFA) GetEpsilonClosures() map[int][]int {
 	epsilonClosures := make(map[int][]int, 0)
 	for _, state := range nfa.States {
@@ -314,4 +327,22 @@ func (nfa *NFA) GetEpsilonClosures() map[int][]int {
 
 	}
 	return epsilonClosures
+}
+
+//EpsilonBasis NFA
+func EpsilonBasis() *NFA {
+	newNFA := New()
+	startState := newNFA.AddState(true, false)
+	endState := newNFA.AddState(false, true)
+	newNFA.AddEpsilonTransition(startState, endState)
+	return newNFA
+}
+
+//SymbolBasis NFA
+func SymbolBasis(symbol string) *NFA {
+	newNFA := New()
+	startState := newNFA.AddState(true, false)
+	endState := newNFA.AddState(false, true)
+	newNFA.AddTransition(startState, symbol, endState)
+	return newNFA
 }

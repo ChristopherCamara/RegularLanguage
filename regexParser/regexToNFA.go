@@ -1,10 +1,11 @@
-package RegularLanguage
+package regexparser
 
 import (
-	"github.com/ChristopherCamara/RegularLanguage/internal/stringArray"
+	"github.com/ChristopherCamara/finiteAutomata/internal/stringArray"
+	"github.com/ChristopherCamara/finiteAutomata/nfa"
 )
 
-func (p *RegexParser) expr() *NFA {
+func (p *RegexParser) expr() *nfa.NFA {
 	term := p.term()
 	if p.hasMoreChars() && p.peek() == "|" {
 		p.eat("|")
@@ -13,7 +14,7 @@ func (p *RegexParser) expr() *NFA {
 	return term
 }
 
-func (p *RegexParser) term() *NFA {
+func (p *RegexParser) term() *nfa.NFA {
 	factor := p.factor()
 	if p.hasMoreChars() && p.peek() != ")" && p.peek() != "|" {
 		factor.Concat(p.term())
@@ -21,7 +22,7 @@ func (p *RegexParser) term() *NFA {
 	return factor
 }
 
-func (p *RegexParser) factor() *NFA {
+func (p *RegexParser) factor() *nfa.NFA {
 	atom := p.atom()
 	if p.hasMoreChars() && p.isMetaChar(p.peek()) {
 		p.next()
@@ -30,7 +31,7 @@ func (p *RegexParser) factor() *NFA {
 	return atom
 }
 
-func (p *RegexParser) atom() *NFA {
+func (p *RegexParser) atom() *nfa.NFA {
 	if p.peek() == "(" {
 		p.eat("(")
 		expr := p.expr()
@@ -40,7 +41,7 @@ func (p *RegexParser) atom() *NFA {
 	return p.char()
 }
 
-func (p *RegexParser) char() *NFA {
+func (p *RegexParser) char() *nfa.NFA {
 	if p.isMetaChar(p.peek()) {
 		panic("Unexpected meta char!")
 	}
@@ -48,14 +49,15 @@ func (p *RegexParser) char() *NFA {
 	if stringArray.IndexOf(current, p.Alphabet) == -1 {
 		p.Alphabet = append(p.Alphabet, current)
 	}
-	return SymbolBasis(current)
+	return nfa.SymbolBasis(current)
 }
 
-func (p *RegexParser) ParseToNFA(regex string) *NFA {
+//ParseToNFA the given regular expression
+func (p *RegexParser) ParseToNFA(regex string) *nfa.NFA {
 	p.Regex = regex
 	p.position = 0
 	if p.Regex == "" {
-		return EpsilonBasis()
+		return nfa.EpsilonBasis()
 	}
 	newNFA := p.expr()
 	newNFA.Alphabet = p.Alphabet

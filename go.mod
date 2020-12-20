@@ -1,4 +1,4 @@
-module github.com/ChristopherCamara/RegularLanguage
+module github.com/ChristopherCamara/finiteAutomata
 
 go 1.15
 

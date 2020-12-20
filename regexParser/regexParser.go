@@ -1,5 +1,6 @@
-package RegularLanguage
+package regexparser
 
+//RegexParser struct definition
 type RegexParser struct {
 	Alphabet []string
 	Regex    string

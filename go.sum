@@ -1,3 +1,5 @@
+github.com/ChristopherCamara/RegularLanguage v0.3.0 h1:7WwwOZosYVBsUa/tTozYbmnHiyto6aTqlhgABJG+ReA=
+github.com/ChristopherCamara/RegularLanguage v0.3.0/go.mod h1:ZAnfExvIofMWwNNVjWkN9B+U3HHmAvnPBb4mBT5T2I4=
 github.com/corona10/goimagehash v1.0.2/go.mod h1:/l9umBhvcHQXVtQO1V6Gp1yD20STawkhRnnX0D1bvVI=
 github.com/fogleman/gg v1.3.0 h1:/7zJX8F6AaYQc57WQCyN9cAIz+4bCJGO9B+dyW29am8=
 github.com/fogleman/gg v1.3.0/go.mod h1:R/bRT+9gY/C5z7JzPU0zXsXHKM4/ayA+zqcVNZzPa1k=
